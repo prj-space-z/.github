@@ -1,0 +1,40 @@
+pipeline {
+	agent any
+
+	environment {
+		DOCKERHUB_CREDENTIALS=credentials('DockerHub')
+	}
+
+	stages {
+        stage("Git Clone"){
+            steps {
+                git branch: 'main', url: 'https://github.com/prj-space-z/.github.git'
+            }           
+        }
+
+        stage('Login') {
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		} 
+
+		stage('Stop') {
+			steps {
+				sh 'docker-compose down'
+			}
+		}
+
+		stage('Start') {
+			steps {
+				sh 'docker-compose up .'
+			}
+		}
+	}
+
+	post {
+		always {
+			sh 'docker logout'
+		}
+	}
+
+}
