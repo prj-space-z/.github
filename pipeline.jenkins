@@ -18,11 +18,7 @@ pipeline {
 			}
 		} 
 
-		stage('Stop') {
-			steps {
-				sh 'docker-compose down'
-			}
-		}
+
 
 		stage('Start') {
 			steps {
